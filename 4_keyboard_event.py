@@ -1,5 +1,6 @@
 import pygame
-
+#############################################################
+# 기본 초기화 (반드시 해야 하는 것)
 pygame.init()   # 초기화 (반드시 필요)
 
 # 화면 크기 설정
@@ -12,6 +13,9 @@ pygame.display.set_caption("Yongjin Game")     #게임 이름
 
 # FPS
 clock = pygame.time.Clock()
+#############################################################
+
+# 1. 사용자 게임 초기화 (배경 화면, 게임 이미지, 좌표, 속도, 폰드 등)
 
 # 배경이미지 불러오기
 backgruond = pygame.image.load("C:/Users/Yongjin/pygame_basic/IMAGE/background.png")
@@ -52,27 +56,31 @@ start_ticks = pygame.time.get_ticks()   # 현재 tick을 받아옴
 running = True      # 게임이 진행중인가?
 while running:
     dt = clock.tick(60)     # 게임화면의 초당 프레임 수를 설정
-    for event in pygame.event.get():    # 어떤 이벤트가 발생하였는가
-        if event.type == pygame.QUIT:   # 창이 닫히는 이벤트가 발생
-            running = False             # 게임이 진행중이 아님
-        if event.type == pygame.KEYDOWN:    # 키가 눌러졌는지 확인
-            if event.key == pygame.K_LEFT:      # 캐릭터를 왼쪽으로
+    # 2. 이벤트 처리 (키보드, 마우스)
+    for event in pygame.event.get():    
+        if event.type == pygame.QUIT:   
+            running = False            
+        if event.type == pygame.KEYDOWN:    
+            if event.key == pygame.K_LEFT:  
                 to_x -= character_speed
-            elif event.key == pygame.K_RIGHT:   # 캐릭터를 오른쪽으로
+            elif event.key == pygame.K_RIGHT:   
                 to_x += character_speed
-            elif event.key == pygame.K_UP:      # 캐릭터를 위로
+            elif event.key == pygame.K_UP:      
                 to_y -= character_speed
-            elif event.key == pygame.K_DOWN:    # 캐릭터를 아래로
+            elif event.key == pygame.K_DOWN:    
                 to_y += character_speed
 
-        if event.type == pygame.KEYUP: # 방향키를 떼면 멈춤
+        if event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                 to_x = 0
             elif event.key == pygame.K_UP or event.key == pygame.K_DOWN:
                 to_y = 0
 
+
+    # 3. 게임 캐릭터 위치 정의
     character_x_pos += to_x * dt
     character_y_pos += to_y * dt
+
 
     # 가로 경계값 처리
     if character_x_pos < 0:
@@ -86,6 +94,7 @@ while running:
     elif character_y_pos > screen_height - character_height:
         character_y_pos = screen_height - character_height
 
+    # 4. 충돌 처리
     # 충돌 처리를 위한 rect 정보 업데이트
     character_rect = character.get_rect()
     character_rect.left = character_x_pos
@@ -100,6 +109,7 @@ while running:
         print("충돌했어요")
         running = False
 
+    # 5. 화면에 그리기
     screen.blit(backgruond, (0,0))      # 배경 그리기
     screen.blit(character, (character_x_pos, character_y_pos))  # 캐릭터그리기
     screen.blit(enemy, (enemy_x_pos, enemy_y_pos))  # 캐릭터그리기
